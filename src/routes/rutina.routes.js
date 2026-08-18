@@ -12,13 +12,12 @@ const {
     crearRutinaSchema,
     actualizarRutinaSchema,
     idRutinaSchema,
-    agregarEjercicioRutinaSchema
+    idRutinaEjercicioSchema,
+    agregarEjercicioRutinaSchema,
+    actualizarEjercicioRutinaSchema
 } = require("../schemas/rutina.schema");
 
 
-/*
-    Todas las rutas de rutinas requieren autenticación.
-*/
 router.use(autenticar);
 
 
@@ -33,7 +32,7 @@ router.post(
 
 
 /*
-    Obtener todas las rutinas del entrenador autenticado.
+    Obtener todas las rutinas del entrenador
 */
 router.get(
     "/",
@@ -42,7 +41,7 @@ router.get(
 
 
 /*
-    Obtener una rutina.
+    Obtener una rutina
 */
 router.get(
     "/:id",
@@ -52,7 +51,7 @@ router.get(
 
 
 /*
-    Agregar ejercicio a una rutina.
+    Agregar ejercicio a rutina
 */
 router.post(
     "/:id/ejercicios",
@@ -63,7 +62,31 @@ router.post(
 
 
 /*
-    Actualizar rutina.
+    Modificar ejercicio dentro de rutina
+*/
+router.put(
+    "/:id/ejercicios/:idRutinaEjercicio",
+    validate(idRutinaEjercicioSchema, "params"),
+    validate(
+        actualizarEjercicioRutinaSchema,
+        "body"
+    ),
+    rutinaController.actualizarEjercicioRutina
+);
+
+
+/*
+    Eliminar ejercicio de rutina
+*/
+router.delete(
+    "/:id/ejercicios/:idRutinaEjercicio",
+    validate(idRutinaEjercicioSchema, "params"),
+    rutinaController.eliminarEjercicioRutina
+);
+
+
+/*
+    Modificar rutina
 */
 router.put(
     "/:id",
@@ -74,7 +97,7 @@ router.put(
 
 
 /*
-    Eliminar rutina.
+    Eliminar rutina
 */
 router.delete(
     "/:id",

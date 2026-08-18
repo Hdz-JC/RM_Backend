@@ -3,7 +3,6 @@ const prisma = require("../config/prisma");
 
 async function crearRutina(data, entrenadorId) {
 
-    // Comprobar que el cliente pertenece al entrenador
     const cliente = await prisma.clientes.findFirst({
         where: {
             id_cliente: data.cliente_id,
@@ -85,9 +84,12 @@ async function obtenerRutinaPorId(id, entrenadorId) {
 
         entrenador: {
             id: rutina.entrenador_id,
-            nombre: rutina.usuarios_rutinas_entrenador_idTousuarios.nombre,
-            paterno: rutina.usuarios_rutinas_entrenador_idTousuarios.paterno,
-            materno: rutina.usuarios_rutinas_entrenador_idTousuarios.materno
+            nombre:
+                rutina.usuarios_rutinas_entrenador_idTousuarios.nombre,
+            paterno:
+                rutina.usuarios_rutinas_entrenador_idTousuarios.paterno,
+            materno:
+                rutina.usuarios_rutinas_entrenador_idTousuarios.materno
         },
 
         cliente: {
@@ -126,7 +128,6 @@ async function agregarEjercicioRutina(
     entrenadorId
 ) {
 
-    // Primero comprobar que la rutina pertenece al entrenador
     const rutina = await prisma.rutinas.findFirst({
         where: {
             id_rutina: rutinaId,
@@ -138,7 +139,6 @@ async function agregarEjercicioRutina(
         return null;
     }
 
-    // El ejercicio debe ser global o creado por el entrenador
     const ejercicio = await prisma.ejercicios.findFirst({
         where: {
             id_ejercicio: data.ejercicio_id,
@@ -166,6 +166,98 @@ async function agregarEjercicioRutina(
             repeticiones: data.repeticiones,
             orden: data.orden,
             comentarios: data.comentarios
+        }
+    });
+}
+
+
+/*
+    MODIFICAR UN EJERCICIO DENTRO DE UNA RUTINA
+*/
+async function actualizarEjercicioRutina(
+    rutinaId,
+    rutinaEjercicioId,
+    data,
+    entrenadorId
+) {
+
+    const rutina = await prisma.rutinas.findFirst({
+        where: {
+            id_rutina: rutinaId,
+            entrenador_id: entrenadorId
+        }
+    });
+
+    if (!rutina) {
+        return null;
+    }
+
+    const rutinaEjercicio =
+        await prisma.rutina_ejercicio.findFirst({
+            where: {
+                id_rutina_ejercicio: rutinaEjercicioId,
+                rutina_id: rutinaId
+            }
+        });
+
+    if (!rutinaEjercicio) {
+        return null;
+    }
+
+    return await prisma.rutina_ejercicio.update({
+        where: {
+            id_rutina_ejercicio: rutinaEjercicioId
+        },
+
+        data: {
+            series: data.series,
+            repeticiones: data.repeticiones,
+            orden: data.orden,
+            comentarios: data.comentarios
+        }
+    });
+}
+
+
+/*
+    ELIMINAR UN EJERCICIO DE UNA RUTINA
+
+    IMPORTANTE:
+    Esto NO elimina el ejercicio del catálogo.
+    Solamente elimina su relación con esta rutina.
+*/
+async function eliminarEjercicioRutina(
+    rutinaId,
+    rutinaEjercicioId,
+    entrenadorId
+) {
+
+    const rutina = await prisma.rutinas.findFirst({
+        where: {
+            id_rutina: rutinaId,
+            entrenador_id: entrenadorId
+        }
+    });
+
+    if (!rutina) {
+        return null;
+    }
+
+    const rutinaEjercicio =
+        await prisma.rutina_ejercicio.findFirst({
+            where: {
+                id_rutina_ejercicio: rutinaEjercicioId,
+                rutina_id: rutinaId
+            }
+        });
+
+    if (!rutinaEjercicio) {
+        return null;
+    }
+
+    return await prisma.rutina_ejercicio.delete({
+        where: {
+            id_rutina_ejercicio: rutinaEjercicioId
         }
     });
 }
@@ -232,6 +324,8 @@ module.exports = {
     obtenerRutinas,
     obtenerRutinaPorId,
     agregarEjercicioRutina,
+    actualizarEjercicioRutina,
+    eliminarEjercicioRutina,
     actualizarRutina,
     eliminarRutina
 };

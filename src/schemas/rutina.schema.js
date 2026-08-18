@@ -40,9 +40,36 @@ const idRutinaSchema = z.object({
     id: z.uuid()
 });
 
+const idRutinaEjercicioSchema = z.object({
+    id: z.uuid(),
+    idRutinaEjercicio: z.uuid()
+});
+
 const agregarEjercicioRutinaSchema = z.object({
     ejercicio_id: z.uuid(),
 
+    series: z
+        .number()
+        .int()
+        .positive(),
+
+    repeticiones: z
+        .number()
+        .int()
+        .positive(),
+
+    orden: z
+        .number()
+        .int()
+        .positive(),
+
+    comentarios: z
+        .string()
+        .optional()
+        .nullable()
+});
+
+const actualizarEjercicioRutinaSchema = z.object({
     series: z
         .number()
         .int()
@@ -68,5 +95,7 @@ module.exports = {
     crearRutinaSchema,
     actualizarRutinaSchema,
     idRutinaSchema,
-    agregarEjercicioRutinaSchema
+    idRutinaEjercicioSchema,
+    agregarEjercicioRutinaSchema,
+    actualizarEjercicioRutinaSchema
 };

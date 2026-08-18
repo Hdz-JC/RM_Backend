@@ -97,6 +97,63 @@ async function agregarEjercicioRutina(req, res, next) {
 }
 
 
+async function actualizarEjercicioRutina(req, res, next) {
+
+    try {
+
+        const entrenadorId = req.usuario.id_usuario;
+
+        const rutinaEjercicio =
+            await rutinaService.actualizarEjercicioRutina(
+                req.params.id,
+                req.params.idRutinaEjercicio,
+                req.body,
+                entrenadorId
+            );
+
+        if (!rutinaEjercicio) {
+            return res.status(404).json({
+                mensaje:
+                    "El ejercicio no existe dentro de esta rutina o no tienes permiso"
+            });
+        }
+
+        res.json(rutinaEjercicio);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function eliminarEjercicioRutina(req, res, next) {
+
+    try {
+
+        const entrenadorId = req.usuario.id_usuario;
+
+        const rutinaEjercicio =
+            await rutinaService.eliminarEjercicioRutina(
+                req.params.id,
+                req.params.idRutinaEjercicio,
+                entrenadorId
+            );
+
+        if (!rutinaEjercicio) {
+            return res.status(404).json({
+                mensaje:
+                    "El ejercicio no existe dentro de esta rutina o no tienes permiso"
+            });
+        }
+
+        res.status(204).send();
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 async function actualizarRutina(req, res, next) {
 
     try {
@@ -157,6 +214,8 @@ module.exports = {
     obtenerRutinas,
     obtenerRutinaPorId,
     agregarEjercicioRutina,
+    actualizarEjercicioRutina,
+    eliminarEjercicioRutina,
     actualizarRutina,
     eliminarRutina
 };
