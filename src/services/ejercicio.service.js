@@ -17,7 +17,8 @@ async function crearEjercicio(data) {
         data: {
             nombre: data.nombre,
             categoria: data.categoria,
-            descripcion: data.descripcion
+            descripcion: data.descripcion,
+            created_by: data.created_by
         }
     });
 }

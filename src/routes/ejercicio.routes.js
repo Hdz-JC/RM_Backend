@@ -6,6 +6,8 @@ const ejercicioController = require("../controllers/ejercicio.controller");
 
 const validate = require("../middlewares/validate.middleware");
 
+const autenticar = require("../middlewares/auth.middleware");
+
 const {
     crearEjercicioSchema,
     actualizarEjercicioSchema,
@@ -22,6 +24,7 @@ router.get("/:id",
 );
 
 router.post("/",
+    autenticar,
     validate(crearEjercicioSchema, "body"),
     ejercicioController.crearEjercicio
 );

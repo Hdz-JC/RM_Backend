@@ -31,17 +31,19 @@ async function obtenerEjercicioPorId(req, res) {
     }
 }
 
-async function crearEjercicio(req, res) {
+async function crearEjercicio(req, res, next) {
     try {
         const { nombre, categoria, descripcion } = req.body;
 
         const ejercicio = await ejercicioService.crearEjercicio({
             nombre,
             categoria,
-            descripcion
+            descripcion,
+            created_by: req.usuario.id_usuario
         });
 
         res.status(201).json(ejercicio);
+
     } catch (error) {
         next(error);
     }
