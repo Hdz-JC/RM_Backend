@@ -56,9 +56,44 @@ async function agregarEjercicioRutina(req, res, next) {
     }
 }
 
+async function actualizarRutina(req, res) {
+    try {
+
+        const rutina = await rutinaService.actualizarRutina(
+            req.params.id,
+            req.body
+        );
+
+        res.json(rutina);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            mensaje: "Error al actualizar la rutina"
+        });
+    }
+}
+
+async function eliminarRutina(req, res, next) {
+    try {
+        const { id } = req.params;
+
+        await rutinaService.eliminarRutina(id);
+
+        res.status(204).send();
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     crearRutina,
     obtenerRutinas,
     obtenerRutinaPorId,
-    agregarEjercicioRutina
+    agregarEjercicioRutina,
+    actualizarRutina,
+    eliminarRutina
 };

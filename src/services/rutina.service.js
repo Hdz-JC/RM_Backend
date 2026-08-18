@@ -108,9 +108,32 @@ async function agregarEjercicioRutina(rutinaId, data) {
     });
 }
 
+async function actualizarRutina(id, data) {
+    return await prisma.rutinas.update({
+        where: {
+            id_rutina: id
+        },
+        data: {
+            nombre: data.nombre,
+            fecha: data.fecha ? new Date(data.fecha) : undefined,
+            comentarios: data.comentarios
+        }
+    });
+}
+
+async function eliminarRutina(id) {
+    return await prisma.rutinas.delete({
+        where: {
+            id_rutina: id
+        }
+    });
+}
+
 module.exports = {
     crearRutina,
     obtenerRutinas,
     obtenerRutinaPorId,
-    agregarEjercicioRutina
+    agregarEjercicioRutina,
+    actualizarRutina,
+    eliminarRutina
 };

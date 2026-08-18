@@ -37,5 +37,16 @@ router.get(
     rutinaController.obtenerRutinaPorId
 );
 
+router.put("/:id",
+    validate(idRutinaSchema, "params"),
+    rutinaController.actualizarRutina
+);
+
+router.delete(
+    "/:id",
+    validate(idRutinaSchema, "params"),
+    rutinaController.eliminarRutina
+);
+
 
 module.exports = router;
