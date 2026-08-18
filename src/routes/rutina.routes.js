@@ -12,22 +12,19 @@ const {
     crearRutinaSchema,
     actualizarRutinaSchema,
     idRutinaSchema,
-    agregarEjercicioRutinaSchema,
-    idRutinaEjercicioSchema,
-    actualizarEjercicioRutinaSchema
+    agregarEjercicioRutinaSchema
 } = require("../schemas/rutina.schema");
 
 
-// Todas las rutas requieren autenticación
+/*
+    Todas las rutas de rutinas requieren autenticación.
+*/
 router.use(autenticar);
 
 
-// ============================================================
-// RUTINAS
-// ============================================================
-
-
-// Crear rutina
+/*
+    Crear rutina
+*/
 router.post(
     "/",
     validate(crearRutinaSchema, "body"),
@@ -35,14 +32,18 @@ router.post(
 );
 
 
-// Obtener todas las rutinas del entrenador
+/*
+    Obtener todas las rutinas del entrenador autenticado.
+*/
 router.get(
     "/",
     rutinaController.obtenerRutinas
 );
 
 
-// Obtener una rutina
+/*
+    Obtener una rutina.
+*/
 router.get(
     "/:id",
     validate(idRutinaSchema, "params"),
@@ -50,29 +51,9 @@ router.get(
 );
 
 
-// Actualizar rutina
-router.put(
-    "/:id",
-    validate(idRutinaSchema, "params"),
-    validate(actualizarRutinaSchema, "body"),
-    rutinaController.actualizarRutina
-);
-
-
-// Eliminar rutina
-router.delete(
-    "/:id",
-    validate(idRutinaSchema, "params"),
-    rutinaController.eliminarRutina
-);
-
-
-// ============================================================
-// EJERCICIOS DE UNA RUTINA
-// ============================================================
-
-
-// Agregar ejercicio a una rutina
+/*
+    Agregar ejercicio a una rutina.
+*/
 router.post(
     "/:id/ejercicios",
     validate(idRutinaSchema, "params"),
@@ -81,20 +62,24 @@ router.post(
 );
 
 
-// Actualizar ejercicio dentro de una rutina
+/*
+    Actualizar rutina.
+*/
 router.put(
-    "/:id/ejercicios/:idRutinaEjercicio",
-    validate(idRutinaEjercicioSchema, "params"),
-    validate(actualizarEjercicioRutinaSchema, "body"),
-    rutinaController.actualizarEjercicioRutina
+    "/:id",
+    validate(idRutinaSchema, "params"),
+    validate(actualizarRutinaSchema, "body"),
+    rutinaController.actualizarRutina
 );
 
 
-// Eliminar ejercicio de una rutina
+/*
+    Eliminar rutina.
+*/
 router.delete(
-    "/:id/ejercicios/:idRutinaEjercicio",
-    validate(idRutinaEjercicioSchema, "params"),
-    rutinaController.eliminarEjercicioRutina
+    "/:id",
+    validate(idRutinaSchema, "params"),
+    rutinaController.eliminarRutina
 );
 
 

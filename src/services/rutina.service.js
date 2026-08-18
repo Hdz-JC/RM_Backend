@@ -1,15 +1,9 @@
 const prisma = require("../config/prisma");
 
 
-/**
- * Crear una rutina.
- *
- * El entrenador_id viene del usuario autenticado,
- * nunca del body.
- */
 async function crearRutina(data, entrenadorId) {
 
-    // Verificar que el cliente pertenece al entrenador
+    // Comprobar que el cliente pertenece al entrenador
     const cliente = await prisma.clientes.findFirst({
         where: {
             id_cliente: data.cliente_id,
@@ -26,32 +20,24 @@ async function crearRutina(data, entrenadorId) {
             entrenador_id: entrenadorId,
             cliente_id: data.cliente_id,
             nombre: data.nombre,
-
             fecha: data.fecha
                 ? new Date(`${data.fecha}T00:00:00`)
                 : undefined,
-
             comentarios: data.comentarios
         }
     });
 }
 
 
-/**
- * Obtener solamente las rutinas
- * del entrenador autenticado.
- */
 async function obtenerRutinas(entrenadorId) {
 
     return await prisma.rutinas.findMany({
         where: {
             entrenador_id: entrenadorId
         },
-
         orderBy: {
             fecha_creacion: "desc"
         },
-
         include: {
             clientes: true
         }
@@ -59,10 +45,6 @@ async function obtenerRutinas(entrenadorId) {
 }
 
 
-/**
- * Obtener una rutina solamente si
- * pertenece al entrenador autenticado.
- */
 async function obtenerRutinaPorId(id, entrenadorId) {
 
     const rutina = await prisma.rutinas.findFirst({
@@ -103,30 +85,15 @@ async function obtenerRutinaPorId(id, entrenadorId) {
 
         entrenador: {
             id: rutina.entrenador_id,
-
-            nombre:
-                rutina
-                    .usuarios_rutinas_entrenador_idTousuarios
-                    .nombre,
-
-            paterno:
-                rutina
-                    .usuarios_rutinas_entrenador_idTousuarios
-                    .paterno,
-
-            materno:
-                rutina
-                    .usuarios_rutinas_entrenador_idTousuarios
-                    .materno
+            nombre: rutina.usuarios_rutinas_entrenador_idTousuarios.nombre,
+            paterno: rutina.usuarios_rutinas_entrenador_idTousuarios.paterno,
+            materno: rutina.usuarios_rutinas_entrenador_idTousuarios.materno
         },
 
         cliente: {
-            id: rutina.clientes.id_cliente,
-
+            id: rutina.cliente_id,
             nombre: rutina.clientes.nombre,
-
             paterno: rutina.clientes.paterno,
-
             materno: rutina.clientes.materno
         },
 
@@ -153,19 +120,13 @@ async function obtenerRutinaPorId(id, entrenadorId) {
 }
 
 
-/**
- * Agregar ejercicio a una rutina.
- *
- * Se comprueba:
- * 1. Que la rutina pertenece al entrenador.
- * 2. Que el ejercicio es global o pertenece al entrenador.
- */
 async function agregarEjercicioRutina(
     rutinaId,
     data,
     entrenadorId
 ) {
 
+    // Primero comprobar que la rutina pertenece al entrenador
     const rutina = await prisma.rutinas.findFirst({
         where: {
             id_rutina: rutinaId,
@@ -177,7 +138,7 @@ async function agregarEjercicioRutina(
         return null;
     }
 
-
+    // El ejercicio debe ser global o creado por el entrenador
     const ejercicio = await prisma.ejercicios.findFirst({
         where: {
             id_ejercicio: data.ejercicio_id,
@@ -197,28 +158,19 @@ async function agregarEjercicioRutina(
         return null;
     }
 
-
     return await prisma.rutina_ejercicio.create({
         data: {
             rutina_id: rutinaId,
-
             ejercicio_id: data.ejercicio_id,
-
             series: data.series,
-
             repeticiones: data.repeticiones,
-
             orden: data.orden,
-
             comentarios: data.comentarios
         }
     });
 }
 
 
-/**
- * Actualizar una rutina propia.
- */
 async function actualizarRutina(
     id,
     data,
@@ -235,7 +187,6 @@ async function actualizarRutina(
     if (!rutina) {
         return null;
     }
-
 
     return await prisma.rutinas.update({
         where: {
@@ -255,13 +206,7 @@ async function actualizarRutina(
 }
 
 
-/**
- * Eliminar una rutina propia.
- */
-async function eliminarRutina(
-    id,
-    entrenadorId
-) {
+async function eliminarRutina(id, entrenadorId) {
 
     const rutina = await prisma.rutinas.findFirst({
         where: {
@@ -274,103 +219,9 @@ async function eliminarRutina(
         return null;
     }
 
-
     return await prisma.rutinas.delete({
         where: {
             id_rutina: id
-        }
-    });
-}
-
-async function actualizarEjercicioRutina(
-    rutinaId,
-    rutinaEjercicioId,
-    data,
-    entrenadorId
-) {
-
-    // Primero verificamos que la rutina pertenece
-    // al entrenador autenticado.
-    const rutina = await prisma.rutinas.findFirst({
-        where: {
-            id_rutina: rutinaId,
-            entrenador_id: entrenadorId
-        }
-    });
-
-    if (!rutina) {
-        return null;
-    }
-
-
-    // Verificamos que el ejercicio realmente
-    // pertenece a esa rutina.
-    const rutinaEjercicio =
-        await prisma.rutina_ejercicio.findFirst({
-            where: {
-                id_rutina_ejercicio: rutinaEjercicioId,
-                rutina_id: rutinaId
-            }
-        });
-
-    if (!rutinaEjercicio) {
-        return null;
-    }
-
-
-    return await prisma.rutina_ejercicio.update({
-        where: {
-            id_rutina_ejercicio: rutinaEjercicioId
-        },
-
-        data: {
-            series: data.series,
-            repeticiones: data.repeticiones,
-            orden: data.orden,
-            comentarios: data.comentarios
-        }
-    });
-}
-
-
-async function eliminarEjercicioRutina(
-    rutinaId,
-    rutinaEjercicioId,
-    entrenadorId
-) {
-
-    // Verificar que la rutina pertenece
-    // al entrenador autenticado.
-    const rutina = await prisma.rutinas.findFirst({
-        where: {
-            id_rutina: rutinaId,
-            entrenador_id: entrenadorId
-        }
-    });
-
-    if (!rutina) {
-        return null;
-    }
-
-
-    // Verificar que el ejercicio pertenece
-    // a esa rutina.
-    const rutinaEjercicio =
-        await prisma.rutina_ejercicio.findFirst({
-            where: {
-                id_rutina_ejercicio: rutinaEjercicioId,
-                rutina_id: rutinaId
-            }
-        });
-
-    if (!rutinaEjercicio) {
-        return null;
-    }
-
-
-    return await prisma.rutina_ejercicio.delete({
-        where: {
-            id_rutina_ejercicio: rutinaEjercicioId
         }
     });
 }
@@ -382,7 +233,5 @@ module.exports = {
     obtenerRutinaPorId,
     agregarEjercicioRutina,
     actualizarRutina,
-    eliminarRutina,
-    actualizarEjercicioRutina,
-    eliminarEjercicioRutina
+    eliminarRutina
 };
