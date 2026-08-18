@@ -1,9 +1,8 @@
 const { z } = require("zod");
 
-const crearRutinaSchema = z.object({
-    entrenador_id: z.uuid(),
 
-    usuario_id: z.uuid(),
+const crearRutinaSchema = z.object({
+    cliente_id: z.uuid(),
 
     nombre: z
         .string()
@@ -21,9 +20,29 @@ const crearRutinaSchema = z.object({
         .nullable()
 });
 
+
+const actualizarRutinaSchema = z.object({
+    nombre: z
+        .string()
+        .min(1, "El nombre es obligatorio")
+        .max(150, "El nombre no puede superar los 150 caracteres"),
+
+    fecha: z
+        .string()
+        .date()
+        .optional(),
+
+    comentarios: z
+        .string()
+        .optional()
+        .nullable()
+});
+
+
 const idRutinaSchema = z.object({
     id: z.uuid()
 });
+
 
 const agregarEjercicioRutinaSchema = z.object({
     ejercicio_id: z.uuid(),
@@ -49,8 +68,49 @@ const agregarEjercicioRutinaSchema = z.object({
         .nullable()
 });
 
+
+/*
+ * ID del registro rutina_ejercicio
+ */
+const idRutinaEjercicioSchema = z.object({
+    id: z.uuid(),
+    idRutinaEjercicio: z.uuid()
+});
+
+
+/*
+ * Datos que se pueden modificar dentro
+ * de un ejercicio de una rutina.
+ */
+const actualizarEjercicioRutinaSchema = z.object({
+
+    series: z
+        .number()
+        .int()
+        .positive(),
+
+    repeticiones: z
+        .number()
+        .int()
+        .positive(),
+
+    orden: z
+        .number()
+        .int()
+        .positive(),
+
+    comentarios: z
+        .string()
+        .optional()
+        .nullable()
+});
+
+
 module.exports = {
     crearRutinaSchema,
+    actualizarRutinaSchema,
     idRutinaSchema,
-    agregarEjercicioRutinaSchema
+    agregarEjercicioRutinaSchema,
+    idRutinaEjercicioSchema,
+    actualizarEjercicioRutinaSchema
 };
