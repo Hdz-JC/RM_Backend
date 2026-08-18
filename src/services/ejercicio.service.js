@@ -1,14 +1,6 @@
 const prisma = require("../config/prisma");
 
-/**
- * Obtener ejercicios disponibles para el entrenador autenticado.
- *
- * Se muestran:
- *  - ejercicios globales (created_by = null)
- *  - ejercicios creados por el entrenador actual
- *
- * NO se muestran ejercicios privados de otros entrenadores.
- */
+
 async function obtenerEjercicios(entrenadorId) {
     return await prisma.ejercicios.findMany({
         where: {
@@ -28,11 +20,6 @@ async function obtenerEjercicios(entrenadorId) {
 }
 
 
-/**
- * Obtener un ejercicio solamente si:
- *  - es global
- *  - o pertenece al entrenador actual
- */
 async function obtenerEjercicioPorId(id, entrenadorId) {
     return await prisma.ejercicios.findFirst({
         where: {
@@ -50,12 +37,6 @@ async function obtenerEjercicioPorId(id, entrenadorId) {
 }
 
 
-/**
- * Crear ejercicio propio del entrenador.
- *
- * created_by se obtiene del usuario autenticado,
- * NO del body enviado por el frontend.
- */
 async function crearEjercicio(data, entrenadorId) {
     return await prisma.ejercicios.create({
         data: {
@@ -68,14 +49,6 @@ async function crearEjercicio(data, entrenadorId) {
 }
 
 
-/**
- * Actualizar un ejercicio.
- *
- * Los ejercicios globales no pueden ser modificados
- * por un entrenador.
- *
- * Solamente puede modificar sus propios ejercicios.
- */
 async function actualizarEjercicio(id, data, entrenadorId) {
     const ejercicio = await prisma.ejercicios.findFirst({
         where: {
@@ -101,14 +74,6 @@ async function actualizarEjercicio(id, data, entrenadorId) {
 }
 
 
-/**
- * Eliminar un ejercicio.
- *
- * Solamente se pueden eliminar ejercicios creados
- * por el entrenador actual.
- *
- * Los ejercicios globales no se pueden eliminar aquí.
- */
 async function eliminarEjercicio(id, entrenadorId) {
     const ejercicio = await prisma.ejercicios.findFirst({
         where: {
