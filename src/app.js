@@ -5,8 +5,10 @@ const app = express();
 app.use(express.json());
 
 const ejercicioRoutes = require("./routes/ejercicio.routes");
+const rutinaRoutes = require("./routes/rutina.routes");
 
 app.use("/api/ejercicios", ejercicioRoutes);
+app.use("/api/rutinas", rutinaRoutes);
 
 // Middleware de errores
 const errorMiddleware = require("./middlewares/error.middleware");
