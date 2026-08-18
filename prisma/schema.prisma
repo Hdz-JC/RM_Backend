@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ejercicios {
+  id_ejercicio        String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre              String                @db.VarChar(150)
+  categoria           String                @db.VarChar(100)
+  descripcion         String?
+  created_by          String?               @db.Uuid
+  fecha_creacion      DateTime              @default(now()) @db.Timestamp(6)
+  fecha_actualizacion DateTime              @default(now()) @db.Timestamp(6)
+  usuarios            usuarios?             @relation(fields: [created_by], references: [id_usuario], onUpdate: NoAction, map: "fk_ejercicio_usuario")
+  plantilla_ejercicio plantilla_ejercicio[]
+  rutina_ejercicio    rutina_ejercicio[]
+
+  @@index([categoria], map: "idx_ejercicios_categoria")
+  @@index([created_by], map: "idx_ejercicios_created_by")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model plantilla_ejercicio {
+  id_plantilla_ejercicio String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  plantilla_id           String     @db.Uuid
+  ejercicio_id           String     @db.Uuid
+  series                 Int
+  repeticiones           Int
+  orden                  Int        @default(1)
+  comentarios            String?
+  ejercicios             ejercicios @relation(fields: [ejercicio_id], references: [id_ejercicio], onUpdate: NoAction, map: "fk_plantilla_ejercicio_ejercicio")
+  plantillas             plantillas @relation(fields: [plantilla_id], references: [id_plantilla], onDelete: Cascade, onUpdate: NoAction, map: "fk_plantilla_ejercicio_plantilla")
+
+  @@unique([plantilla_id, orden], map: "uq_plantilla_ejercicio_orden")
+  @@index([ejercicio_id], map: "idx_plantilla_ejercicio_ejercicio_id")
+  @@index([plantilla_id], map: "idx_plantilla_ejercicio_plantilla_id")
+}
+
+model plantillas {
+  id_plantilla        String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id          String                @db.Uuid
+  nombre              String                @db.VarChar(150)
+  fecha               DateTime              @default(dbgenerated("CURRENT_DATE")) @db.Date
+  comentarios         String?
+  fecha_creacion      DateTime              @default(now()) @db.Timestamp(6)
+  fecha_actualizacion DateTime              @default(now()) @db.Timestamp(6)
+  plantilla_ejercicio plantilla_ejercicio[]
+  usuarios            usuarios              @relation(fields: [usuario_id], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_plantilla_usuario")
+
+  @@index([usuario_id], map: "idx_plantillas_usuario_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model rutina_ejercicio {
+  id_rutina_ejercicio String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rutina_id           String     @db.Uuid
+  ejercicio_id        String     @db.Uuid
+  series              Int
+  repeticiones        Int
+  orden               Int        @default(1)
+  comentarios         String?
+  ejercicios          ejercicios @relation(fields: [ejercicio_id], references: [id_ejercicio], onUpdate: NoAction, map: "fk_rutina_ejercicio_ejercicio")
+  rutinas             rutinas    @relation(fields: [rutina_id], references: [id_rutina], onDelete: Cascade, onUpdate: NoAction, map: "fk_rutina_ejercicio_rutina")
+
+  @@unique([rutina_id, orden], map: "uq_rutina_ejercicio_orden")
+  @@index([ejercicio_id], map: "idx_rutina_ejercicio_ejercicio_id")
+  @@index([rutina_id], map: "idx_rutina_ejercicio_rutina_id")
+}
+
+model rutinas {
+  id_rutina                                String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  entrenador_id                            String             @db.Uuid
+  usuario_id                               String             @db.Uuid
+  nombre                                   String             @db.VarChar(150)
+  fecha                                    DateTime           @default(dbgenerated("CURRENT_DATE")) @db.Date
+  comentarios                              String?
+  fecha_creacion                           DateTime           @default(now()) @db.Timestamp(6)
+  fecha_actualizacion                      DateTime           @default(now()) @db.Timestamp(6)
+  rutina_ejercicio                         rutina_ejercicio[]
+  usuarios_rutinas_entrenador_idTousuarios usuarios           @relation("rutinas_entrenador_idTousuarios", fields: [entrenador_id], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_rutina_entrenador")
+  usuarios_rutinas_usuario_idTousuarios    usuarios           @relation("rutinas_usuario_idTousuarios", fields: [usuario_id], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_rutina_usuario")
+
+  @@index([usuario_id], map: "idx_rutinas_usuario_id")
+}
+
+model tickets {
+  id_ticket   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id  String   @db.Uuid
+  fecha       DateTime @default(now()) @db.Timestamp(6)
+  categoria   String   @db.VarChar(100)
+  descripcion String
+  usuarios    usuarios @relation(fields: [usuario_id], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_ticket_usuario")
+
+  @@index([fecha], map: "idx_tickets_fecha")
+  @@index([usuario_id], map: "idx_tickets_usuario_id")
+}
+
+model usuarios {
+  id_usuario                              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  keycloak_id                             String       @unique @db.VarChar(255)
+  nombre                                  String       @db.VarChar(100)
+  paterno                                 String       @db.VarChar(100)
+  materno                                 String?      @db.VarChar(100)
+  fecha_creacion                          DateTime     @default(now()) @db.Timestamp(6)
+  fecha_actualizacion                     DateTime     @default(now()) @db.Timestamp(6)
+  ejercicios                              ejercicios[]
+  plantillas                              plantillas[]
+  rutinas_rutinas_entrenador_idTousuarios rutinas[]    @relation("rutinas_entrenador_idTousuarios")
+  rutinas_rutinas_usuario_idTousuarios    rutinas[]    @relation("rutinas_usuario_idTousuarios")
+  tickets                                 tickets[]
+}
