@@ -8,7 +8,8 @@ const validate = require("../middlewares/validate.middleware");
 
 const {
     crearRutinaSchema,
-    idRutinaSchema
+    idRutinaSchema,
+    agregarEjercicioRutinaSchema
 } = require("../schemas/rutina.schema");
 
 
@@ -16,6 +17,13 @@ router.post(
     "/",
     validate(crearRutinaSchema, "body"),
     rutinaController.crearRutina
+);
+
+router.post(
+    "/:id/ejercicios",
+    validate(idRutinaSchema, "params"),
+    validate(agregarEjercicioRutinaSchema, "body"),
+    rutinaController.agregarEjercicioRutina
 );
 
 router.get(

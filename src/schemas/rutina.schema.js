@@ -25,7 +25,32 @@ const idRutinaSchema = z.object({
     id: z.uuid()
 });
 
+const agregarEjercicioRutinaSchema = z.object({
+    ejercicio_id: z.uuid(),
+
+    series: z
+        .number()
+        .int()
+        .positive(),
+
+    repeticiones: z
+        .number()
+        .int()
+        .positive(),
+
+    orden: z
+        .number()
+        .int()
+        .positive(),
+
+    comentarios: z
+        .string()
+        .optional()
+        .nullable()
+});
+
 module.exports = {
     crearRutinaSchema,
-    idRutinaSchema
+    idRutinaSchema,
+    agregarEjercicioRutinaSchema
 };

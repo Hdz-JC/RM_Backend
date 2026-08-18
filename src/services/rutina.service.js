@@ -34,8 +34,22 @@ async function obtenerRutinaPorId(id) {
     });
 }
 
+async function agregarEjercicioRutina(rutinaId, data) {
+    return await prisma.rutina_ejercicio.create({
+        data: {
+            rutina_id: rutinaId,
+            ejercicio_id: data.ejercicio_id,
+            series: data.series,
+            repeticiones: data.repeticiones,
+            orden: data.orden,
+            comentarios: data.comentarios
+        }
+    });
+}
+
 module.exports = {
     crearRutina,
     obtenerRutinas,
-    obtenerRutinaPorId
+    obtenerRutinaPorId,
+    agregarEjercicioRutina
 };

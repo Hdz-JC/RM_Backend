@@ -41,8 +41,24 @@ async function obtenerRutinaPorId(req, res, next) {
     }
 }
 
+async function agregarEjercicioRutina(req, res, next) {
+    try {
+        const rutinaEjercicio =
+            await rutinaService.agregarEjercicioRutina(
+                req.params.id,
+                req.body
+            );
+
+        res.status(201).json(rutinaEjercicio);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     crearRutina,
     obtenerRutinas,
-    obtenerRutinaPorId
+    obtenerRutinaPorId,
+    agregarEjercicioRutina
 };
