@@ -22,7 +22,20 @@ async function obtenerRutinas() {
     });
 }
 
+async function obtenerRutinaPorId(id) {
+    return await prisma.rutinas.findUnique({
+        where: {
+            id_rutina: id
+        },
+        include: {
+            usuarios_rutinas_entrenador_idTousuarios: true,
+            usuarios_rutinas_usuario_idTousuarios: true
+        }
+    });
+}
+
 module.exports = {
     crearRutina,
-    obtenerRutinas
+    obtenerRutinas,
+    obtenerRutinaPorId
 };

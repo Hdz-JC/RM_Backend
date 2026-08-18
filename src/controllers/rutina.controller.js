@@ -22,7 +22,27 @@ async function obtenerRutinas(req, res, next) {
     }
 }
 
+async function obtenerRutinaPorId(req, res, next) {
+    try {
+        const rutina = await rutinaService.obtenerRutinaPorId(
+            req.params.id
+        );
+
+        if (!rutina) {
+            return res.status(404).json({
+                mensaje: "La rutina no existe"
+            });
+        }
+
+        res.json(rutina);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     crearRutina,
-    obtenerRutinas
+    obtenerRutinas,
+    obtenerRutinaPorId
 };

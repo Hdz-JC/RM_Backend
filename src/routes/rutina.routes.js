@@ -7,7 +7,8 @@ const rutinaController = require("../controllers/rutina.controller");
 const validate = require("../middlewares/validate.middleware");
 
 const {
-    crearRutinaSchema
+    crearRutinaSchema,
+    idRutinaSchema
 } = require("../schemas/rutina.schema");
 
 
@@ -20,6 +21,12 @@ router.post(
 router.get(
     "/",
     rutinaController.obtenerRutinas
+);
+
+router.get(
+    "/:id",
+    validate(idRutinaSchema, "params"),
+    rutinaController.obtenerRutinaPorId
 );
 
 
