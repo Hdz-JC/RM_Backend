@@ -31,8 +31,23 @@ async function crearEjercicio(data) {
     });
 }
 
+async function actualizarEjercicio(id, data) {
+    return await prisma.ejercicios.update({
+        where: {
+            id_ejercicio: id
+        },
+        data: {
+            nombre: data.nombre,
+            categoria: data.categoria,
+            descripcion: data.descripcion
+        }
+    });
+}
+
 module.exports = {
     obtenerEjercicios,
     obtenerEjercicioPorId,
-    crearEjercicio
+    crearEjercicio,
+    actualizarEjercicio
+
 };

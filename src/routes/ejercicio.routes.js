@@ -9,4 +9,6 @@ router.get("/:id", ejercicioController.obtenerEjercicioPorId);
 
 router.post("/", ejercicioController.crearEjercicio);
 
+router.put("/:id", ejercicioController.actualizarEjercicio);
+
 module.exports = router;

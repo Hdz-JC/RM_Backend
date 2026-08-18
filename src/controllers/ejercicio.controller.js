@@ -42,8 +42,23 @@ async function crearEjercicio(req, res) {
     res.status(201).json(ejercicio);
 }
 
+async function actualizarEjercicio(req, res) {
+    const { id } = req.params;
+
+    const { nombre, categoria, descripcion } = req.body;
+
+    const ejercicio = await ejercicioService.actualizarEjercicio(id, {
+        nombre,
+        categoria,
+        descripcion
+    });
+
+    res.status(200).json(ejercicio);
+}
+
 module.exports = {
     obtenerEjercicios,
     obtenerEjercicioPorId,
-    crearEjercicio
+    crearEjercicio,
+    actualizarEjercicio
 };
