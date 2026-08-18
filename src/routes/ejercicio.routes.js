@@ -11,4 +11,6 @@ router.post("/", ejercicioController.crearEjercicio);
 
 router.put("/:id", ejercicioController.actualizarEjercicio);
 
+router.delete("/:id", ejercicioController.eliminarEjercicio);
+
 module.exports = router;

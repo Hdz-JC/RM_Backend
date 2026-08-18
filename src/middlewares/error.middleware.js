@@ -11,7 +11,7 @@ function errorMiddleware(err, req, res, next) {
     // Registro no encontrado
     if (err.code === "P2025") {
         return res.status(404).json({
-            mensaje: "El ejercicio no existe"
+            mensaje: "El recurso no existe"
         });
     }
 

@@ -44,10 +44,18 @@ async function actualizarEjercicio(id, data) {
     });
 }
 
+async function eliminarEjercicio(id) {
+    return await prisma.ejercicios.delete({
+        where: {
+            id_ejercicio: id
+        }
+    });
+}
+
 module.exports = {
     obtenerEjercicios,
     obtenerEjercicioPorId,
     crearEjercicio,
-    actualizarEjercicio
-
+    actualizarEjercicio,
+    eliminarEjercicio
 };

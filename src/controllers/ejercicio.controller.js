@@ -66,9 +66,23 @@ async function actualizarEjercicio(req, res, next) {
     }
 }
 
+async function eliminarEjercicio(req, res, next) {
+    try {
+        const { id } = req.params;
+
+        await ejercicioService.eliminarEjercicio(id);
+
+        res.status(204).send();
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     obtenerEjercicios,
     obtenerEjercicioPorId,
     crearEjercicio,
-    actualizarEjercicio
+    actualizarEjercicio,
+    eliminarEjercicio
 };
