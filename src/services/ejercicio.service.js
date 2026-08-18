@@ -13,6 +13,15 @@ async function obtenerEjercicios() {
     return await prisma.ejercicios.findMany();
 }
 
+async function obtenerEjercicioPorId(id) {
+    return await prisma.ejercicios.findUnique({
+        where: {
+            id_ejercicio: id
+        }
+    });
+}
+
 module.exports = {
-    obtenerEjercicios
+    obtenerEjercicios,
+    obtenerEjercicioPorId
 };

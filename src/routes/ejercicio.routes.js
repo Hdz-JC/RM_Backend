@@ -5,5 +5,6 @@ const router = express.Router();
 const ejercicioController = require("../controllers/ejercicio.controller");
 
 router.get("/", ejercicioController.obtenerEjercicios);
+router.get("/:id", ejercicioController.obtenerEjercicioPorId);
 
 module.exports = router;
