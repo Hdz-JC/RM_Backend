@@ -6,24 +6,11 @@ app.use(express.json());
 
 const ejercicioRoutes = require("./routes/ejercicio.routes");
 
-app.use(express.json());
-
 app.use("/api/ejercicios", ejercicioRoutes);
 
-app.get("/health", (req, res) => {
-    res.json({
-        ok: true,
-        mensaje: "Backend funcionando"
-    });
-});
+// Middleware de errores
+const errorMiddleware = require("./middlewares/error.middleware");
 
-module.exports = app;
-
-app.get("/health", (req, res) => {
-    res.json({
-        ok: true,
-        mensaje: "Backend funcionando"
-    });
-});
+app.use(errorMiddleware);
 
 module.exports = app;

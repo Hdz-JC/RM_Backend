@@ -2,9 +2,14 @@ const ejercicioService = require("../services/ejercicio.service");
 
 async function obtenerEjercicios(req, res) {
 
-    const ejercicios = await ejercicioService.obtenerEjercicios();
+    try {
 
-    res.json(ejercicios);
+        const ejercicios = await ejercicioService.obtenerEjercicios();
+
+        res.json(ejercicios);
+    } catch (error) {
+        next(error);
+    }
 }
 
 async function obtenerEjercicioPorId(req, res) {
@@ -22,38 +27,43 @@ async function obtenerEjercicioPorId(req, res) {
         res.json(ejercicio);
 
     } catch (error) {
-        console.error(error);
-
-        res.status(500).json({
-            mensaje: "Error al obtener el ejercicio"
-        });
+        next(error);
     }
 }
 
 async function crearEjercicio(req, res) {
-    const { nombre, categoria, descripcion } = req.body;
+    try {
+        const { nombre, categoria, descripcion } = req.body;
 
-    const ejercicio = await ejercicioService.crearEjercicio({
-        nombre,
-        categoria,
-        descripcion
-    });
+        const ejercicio = await ejercicioService.crearEjercicio({
+            nombre,
+            categoria,
+            descripcion
+        });
 
-    res.status(201).json(ejercicio);
+        res.status(201).json(ejercicio);
+    } catch (error) {
+        next(error);
+    }
 }
 
-async function actualizarEjercicio(req, res) {
-    const { id } = req.params;
+async function actualizarEjercicio(req, res, next) {
+    try {
+        const { id } = req.params;
 
-    const { nombre, categoria, descripcion } = req.body;
+        const { nombre, categoria, descripcion } = req.body;
 
-    const ejercicio = await ejercicioService.actualizarEjercicio(id, {
-        nombre,
-        categoria,
-        descripcion
-    });
+        const ejercicio = await ejercicioService.actualizarEjercicio(id, {
+            nombre,
+            categoria,
+            descripcion
+        });
 
-    res.status(200).json(ejercicio);
+        res.status(200).json(ejercicio);
+
+    } catch (error) {
+        next(error);
+    }
 }
 
 module.exports = {
