@@ -1,22 +1,32 @@
 const ejercicioService = require("../services/ejercicio.service");
 
-async function obtenerEjercicios(req, res) {
 
+async function obtenerEjercicios(req, res, next) {
     try {
+        const entrenadorId = req.usuario.id_usuario;
 
-        const ejercicios = await ejercicioService.obtenerEjercicios();
+        const ejercicios = await ejercicioService.obtenerEjercicios(
+            entrenadorId
+        );
 
         res.json(ejercicios);
+
     } catch (error) {
         next(error);
     }
 }
 
-async function obtenerEjercicioPorId(req, res) {
+
+async function obtenerEjercicioPorId(req, res, next) {
     try {
         const { id } = req.params;
 
-        const ejercicio = await ejercicioService.obtenerEjercicioPorId(id);
+        const entrenadorId = req.usuario.id_usuario;
+
+        const ejercicio = await ejercicioService.obtenerEjercicioPorId(
+            id,
+            entrenadorId
+        );
 
         if (!ejercicio) {
             return res.status(404).json({
@@ -31,16 +41,15 @@ async function obtenerEjercicioPorId(req, res) {
     }
 }
 
+
 async function crearEjercicio(req, res, next) {
     try {
-        const { nombre, categoria, descripcion } = req.body;
+        const entrenadorId = req.usuario.id_usuario;
 
-        const ejercicio = await ejercicioService.crearEjercicio({
-            nombre,
-            categoria,
-            descripcion,
-            created_by: req.usuario.id_usuario
-        });
+        const ejercicio = await ejercicioService.crearEjercicio(
+            req.body,
+            entrenadorId
+        );
 
         res.status(201).json(ejercicio);
 
@@ -49,30 +58,49 @@ async function crearEjercicio(req, res, next) {
     }
 }
 
+
 async function actualizarEjercicio(req, res, next) {
     try {
         const { id } = req.params;
 
-        const { nombre, categoria, descripcion } = req.body;
+        const entrenadorId = req.usuario.id_usuario;
 
-        const ejercicio = await ejercicioService.actualizarEjercicio(id, {
-            nombre,
-            categoria,
-            descripcion
-        });
+        const ejercicio = await ejercicioService.actualizarEjercicio(
+            id,
+            req.body,
+            entrenadorId
+        );
 
-        res.status(200).json(ejercicio);
+        if (!ejercicio) {
+            return res.status(404).json({
+                mensaje: "Ejercicio no encontrado o no tienes permiso para modificarlo"
+            });
+        }
+
+        res.json(ejercicio);
 
     } catch (error) {
         next(error);
     }
 }
 
+
 async function eliminarEjercicio(req, res, next) {
     try {
         const { id } = req.params;
 
-        await ejercicioService.eliminarEjercicio(id);
+        const entrenadorId = req.usuario.id_usuario;
+
+        const ejercicio = await ejercicioService.eliminarEjercicio(
+            id,
+            entrenadorId
+        );
+
+        if (!ejercicio) {
+            return res.status(404).json({
+                mensaje: "Ejercicio no encontrado o no tienes permiso para eliminarlo"
+            });
+        }
 
         res.status(204).send();
 
@@ -80,6 +108,7 @@ async function eliminarEjercicio(req, res, next) {
         next(error);
     }
 }
+
 
 module.exports = {
     obtenerEjercicios,

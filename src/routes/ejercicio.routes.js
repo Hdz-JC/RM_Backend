@@ -14,30 +14,49 @@ const {
     idEjercicioSchema
 } = require("../schemas/ejercicio.schema");
 
-router.get("/",
+
+// Todas las rutas de ejercicios requieren autenticación
+router.use(autenticar);
+
+
+// Obtener ejercicios disponibles
+router.get(
+    "/",
     ejercicioController.obtenerEjercicios
 );
 
-router.get("/:id",
+
+// Obtener ejercicio por ID
+router.get(
+    "/:id",
     validate(idEjercicioSchema, "params"),
     ejercicioController.obtenerEjercicioPorId
 );
 
-router.post("/",
-    autenticar,
+
+// Crear ejercicio propio
+router.post(
+    "/",
     validate(crearEjercicioSchema, "body"),
     ejercicioController.crearEjercicio
 );
 
-router.put("/:id",
+
+// Actualizar ejercicio propio
+router.put(
+    "/:id",
     validate(idEjercicioSchema, "params"),
     validate(actualizarEjercicioSchema, "body"),
     ejercicioController.actualizarEjercicio
 );
 
-router.delete("/:id",
+
+// Eliminar ejercicio propio
+router.delete(
+    "/:id",
     validate(idEjercicioSchema, "params"),
     ejercicioController.eliminarEjercicio
 );
+
 
 module.exports = router;

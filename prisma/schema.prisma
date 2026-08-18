@@ -73,17 +73,18 @@ model rutina_ejercicio {
 model rutinas {
   id_rutina                                String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   entrenador_id                            String             @db.Uuid
-  usuario_id                               String             @db.Uuid
   nombre                                   String             @db.VarChar(150)
   fecha                                    DateTime           @default(dbgenerated("CURRENT_DATE")) @db.Date
   comentarios                              String?
   fecha_creacion                           DateTime           @default(now()) @db.Timestamp(6)
   fecha_actualizacion                      DateTime           @default(now()) @db.Timestamp(6)
+  cliente_id                               String             @db.Uuid
   rutina_ejercicio                         rutina_ejercicio[]
+  clientes                                 clientes           @relation(fields: [cliente_id], references: [id_cliente], onDelete: Cascade, onUpdate: NoAction, map: "fk_rutina_cliente")
   usuarios_rutinas_entrenador_idTousuarios usuarios           @relation("rutinas_entrenador_idTousuarios", fields: [entrenador_id], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_rutina_entrenador")
-  usuarios_rutinas_usuario_idTousuarios    usuarios           @relation("rutinas_usuario_idTousuarios", fields: [usuario_id], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_rutina_usuario")
 
-  @@index([usuario_id], map: "idx_rutinas_usuario_id")
+  @@index([cliente_id], map: "idx_rutinas_cliente_id")
+  @@index([entrenador_id], map: "idx_rutinas_entrenador_id")
 }
 
 model tickets {
@@ -106,9 +107,23 @@ model usuarios {
   materno                                 String?      @db.VarChar(100)
   fecha_creacion                          DateTime     @default(now()) @db.Timestamp(6)
   fecha_actualizacion                     DateTime     @default(now()) @db.Timestamp(6)
+  clientes                                clientes[]
   ejercicios                              ejercicios[]
   plantillas                              plantillas[]
   rutinas_rutinas_entrenador_idTousuarios rutinas[]    @relation("rutinas_entrenador_idTousuarios")
-  rutinas_rutinas_usuario_idTousuarios    rutinas[]    @relation("rutinas_usuario_idTousuarios")
   tickets                                 tickets[]
+}
+
+model clientes {
+  id_cliente          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  entrenador_id       String    @db.Uuid
+  nombre              String    @db.VarChar(100)
+  paterno             String    @db.VarChar(100)
+  materno             String?   @db.VarChar(100)
+  fecha_creacion      DateTime  @default(now()) @db.Timestamp(6)
+  fecha_actualizacion DateTime  @default(now()) @db.Timestamp(6)
+  usuarios            usuarios  @relation(fields: [entrenador_id], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_cliente_entrenador")
+  rutinas             rutinas[]
+
+  @@index([entrenador_id], map: "idx_clientes_entrenador_id")
 }
