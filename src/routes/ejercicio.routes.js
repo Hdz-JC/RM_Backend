@@ -7,4 +7,6 @@ const ejercicioController = require("../controllers/ejercicio.controller");
 router.get("/", ejercicioController.obtenerEjercicios);
 router.get("/:id", ejercicioController.obtenerEjercicioPorId);
 
+router.post("/", ejercicioController.crearEjercicio);
+
 module.exports = router;

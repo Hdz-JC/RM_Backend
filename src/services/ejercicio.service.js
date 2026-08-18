@@ -21,7 +21,18 @@ async function obtenerEjercicioPorId(id) {
     });
 }
 
+async function crearEjercicio(data) {
+    return await prisma.ejercicios.create({
+        data: {
+            nombre: data.nombre,
+            categoria: data.categoria,
+            descripcion: data.descripcion
+        }
+    });
+}
+
 module.exports = {
     obtenerEjercicios,
-    obtenerEjercicioPorId
+    obtenerEjercicioPorId,
+    crearEjercicio
 };

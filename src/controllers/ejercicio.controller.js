@@ -30,7 +30,20 @@ async function obtenerEjercicioPorId(req, res) {
     }
 }
 
+async function crearEjercicio(req, res) {
+    const { nombre, categoria, descripcion } = req.body;
+
+    const ejercicio = await ejercicioService.crearEjercicio({
+        nombre,
+        categoria,
+        descripcion
+    });
+
+    res.status(201).json(ejercicio);
+}
+
 module.exports = {
     obtenerEjercicios,
-    obtenerEjercicioPorId
+    obtenerEjercicioPorId,
+    crearEjercicio
 };
