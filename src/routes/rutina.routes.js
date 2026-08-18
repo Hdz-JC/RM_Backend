@@ -17,5 +17,10 @@ router.post(
     rutinaController.crearRutina
 );
 
+router.get(
+    "/",
+    rutinaController.obtenerRutinas
+);
+
 
 module.exports = router;

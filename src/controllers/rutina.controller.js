@@ -11,6 +11,18 @@ async function crearRutina(req, res, next) {
     }
 }
 
+async function obtenerRutinas(req, res, next) {
+    try {
+        const rutinas = await rutinaService.obtenerRutinas();
+
+        res.json(rutinas);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
-    crearRutina
+    crearRutina,
+    obtenerRutinas
 };

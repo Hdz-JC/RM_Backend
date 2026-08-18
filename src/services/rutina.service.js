@@ -14,6 +14,15 @@ async function crearRutina(data) {
     });
 }
 
+async function obtenerRutinas() {
+    return await prisma.rutinas.findMany({
+        orderBy: {
+            fecha_creacion: "desc"
+        }
+    });
+}
+
 module.exports = {
-    crearRutina
+    crearRutina,
+    obtenerRutinas
 };
