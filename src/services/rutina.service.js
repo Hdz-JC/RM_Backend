@@ -23,15 +23,76 @@ async function obtenerRutinas() {
 }
 
 async function obtenerRutinaPorId(id) {
-    return await prisma.rutinas.findUnique({
+
+    const rutina = await prisma.rutinas.findUnique({
         where: {
             id_rutina: id
         },
+
         include: {
             usuarios_rutinas_entrenador_idTousuarios: true,
-            usuarios_rutinas_usuario_idTousuarios: true
+
+            usuarios_rutinas_usuario_idTousuarios: true,
+
+            rutina_ejercicio: {
+                orderBy: {
+                    orden: "asc"
+                },
+
+                include: {
+                    ejercicios: true
+                }
+            }
         }
     });
+
+    if (!rutina) {
+        return null;
+    }
+
+    return {
+        id: rutina.id_rutina,
+
+        nombre: rutina.nombre,
+
+        fecha: rutina.fecha,
+
+        comentarios: rutina.comentarios,
+
+        entrenador: {
+            id: rutina.entrenador_id,
+            nombre: rutina.usuarios_rutinas_entrenador_idTousuarios.nombre,
+            paterno: rutina.usuarios_rutinas_entrenador_idTousuarios.paterno,
+            materno: rutina.usuarios_rutinas_entrenador_idTousuarios.materno
+        },
+
+        usuario: {
+            id: rutina.usuario_id,
+            nombre: rutina.usuarios_rutinas_usuario_idTousuarios.nombre,
+            paterno: rutina.usuarios_rutinas_usuario_idTousuarios.paterno,
+            materno: rutina.usuarios_rutinas_usuario_idTousuarios.materno
+        },
+
+        ejercicios: rutina.rutina_ejercicio.map(item => ({
+            id: item.id_rutina_ejercicio,
+
+            ejercicio_id: item.ejercicio_id,
+
+            nombre: item.ejercicios.nombre,
+
+            categoria: item.ejercicios.categoria,
+
+            descripcion: item.ejercicios.descripcion,
+
+            series: item.series,
+
+            repeticiones: item.repeticiones,
+
+            orden: item.orden,
+
+            comentarios: item.comentarios
+        }))
+    };
 }
 
 async function agregarEjercicioRutina(rutinaId, data) {
