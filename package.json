@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -13,9 +14,12 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jose": "^6.2.9",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "pg": "^8.23.0",
     "zod": "^4.4.3"
   },

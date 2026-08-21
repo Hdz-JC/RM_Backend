@@ -68,28 +68,89 @@ async function obtenerRutinaPorId(req, res, next) {
     }
 }
 
-
 async function agregarEjercicioRutina(req, res, next) {
 
     try {
 
         const entrenadorId = req.usuario.id_usuario;
 
-        const rutinaEjercicio =
+        const resultado =
             await rutinaService.agregarEjercicioRutina(
                 req.params.id,
                 req.body,
                 entrenadorId
             );
 
-        if (!rutinaEjercicio) {
+        if (resultado.tipo === "RUTINA_NO_DISPONIBLE") {
             return res.status(404).json({
                 mensaje:
-                    "La rutina no existe, no te pertenece o el ejercicio no está disponible"
+                    "La rutina no existe o no te pertenece"
             });
         }
 
-        res.status(201).json(rutinaEjercicio);
+        if (resultado.tipo === "EJERCICIO_NO_DISPONIBLE") {
+            return res.status(404).json({
+                mensaje:
+                    "El ejercicio no existe o no está disponible para ti"
+            });
+        }
+
+        if (resultado.tipo === "ORDEN_DUPLICADO") {
+            return res.status(409).json({
+                mensaje:
+                    "Ya existe un ejercicio con ese día y orden dentro de la rutina"
+            });
+        }
+
+        res.status(201).json(resultado);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+/*
+    AGREGAR VARIOS EJERCICIOS A UNA RUTINA
+*/
+async function agregarEjerciciosLoteRutina(req, res, next) {
+
+    try {
+
+        const entrenadorId = req.usuario.id_usuario;
+
+        const resultado =
+            await rutinaService.agregarEjerciciosLoteRutina(
+                req.params.id,
+                req.body.ejercicios,
+                entrenadorId
+            );
+
+        if (resultado?.tipo === "RUTINA_NO_DISPONIBLE") {
+            return res.status(404).json({
+                mensaje:
+                    "La rutina no existe o no te pertenece"
+            });
+        }
+
+        if (resultado?.tipo === "EJERCICIO_NO_DISPONIBLE") {
+            return res.status(404).json({
+                mensaje:
+                    "El ejercicio no existe o no está disponible para ti",
+                ejercicio_id: resultado.ejercicio_id
+            });
+        }
+
+        if (resultado?.tipo === "ORDEN_DUPLICADO") {
+            return res.status(409).json({
+                mensaje:
+                    "Ya existe un ejercicio con ese día y orden dentro de la rutina",
+                dia: resultado.dia,
+                orden: resultado.orden
+            });
+        }
+
+        return res.status(201).json(resultado);
 
     } catch (error) {
         next(error);
@@ -103,7 +164,7 @@ async function actualizarEjercicioRutina(req, res, next) {
 
         const entrenadorId = req.usuario.id_usuario;
 
-        const rutinaEjercicio =
+        const resultado =
             await rutinaService.actualizarEjercicioRutina(
                 req.params.id,
                 req.params.idRutinaEjercicio,
@@ -111,20 +172,54 @@ async function actualizarEjercicioRutina(req, res, next) {
                 entrenadorId
             );
 
-        if (!rutinaEjercicio) {
+        // La rutina no existe o no pertenece al entrenador
+        if (resultado?.tipo === "RUTINA_NO_DISPONIBLE") {
             return res.status(404).json({
                 mensaje:
-                    "El ejercicio no existe dentro de esta rutina o no tienes permiso"
+                    "La rutina no existe o no te pertenece"
             });
         }
 
-        res.json(rutinaEjercicio);
+        // El ejercicio no existe dentro de esta rutina
+        if (
+            resultado?.tipo ===
+            "EJERCICIO_RUTINA_NO_DISPONIBLE"
+        ) {
+            return res.status(404).json({
+                mensaje:
+                    "El ejercicio no existe dentro de esta rutina"
+            });
+        }
+
+        // El nuevo ejercicio no está disponible
+        if (
+            resultado?.tipo ===
+            "EJERCICIO_NO_DISPONIBLE"
+        ) {
+            return res.status(404).json({
+                mensaje:
+                    "El ejercicio no existe o no está disponible para ti"
+            });
+        }
+
+        // Ya existe otro ejercicio con ese día + orden
+        if (
+            resultado?.tipo ===
+            "ORDEN_DUPLICADO"
+        ) {
+            return res.status(409).json({
+                mensaje:
+                    "Ya existe otro ejercicio con ese día y orden dentro de la rutina"
+            });
+        }
+
+        // Actualización exitosa
+        return res.json(resultado);
 
     } catch (error) {
         next(error);
     }
 }
-
 
 async function eliminarEjercicioRutina(req, res, next) {
 
@@ -214,8 +309,10 @@ module.exports = {
     obtenerRutinas,
     obtenerRutinaPorId,
     agregarEjercicioRutina,
+    agregarEjerciciosLoteRutina,
     actualizarEjercicioRutina,
     eliminarEjercicioRutina,
     actualizarRutina,
     eliminarRutina
 };
+

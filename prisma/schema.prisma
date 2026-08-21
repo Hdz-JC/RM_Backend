@@ -54,18 +54,21 @@ model plantillas {
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+
 model rutina_ejercicio {
   id_rutina_ejercicio String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   rutina_id           String     @db.Uuid
   ejercicio_id        String     @db.Uuid
+  dia                 String     @db.VarChar(20)
   series              Int
   repeticiones        Int
   orden               Int        @default(1)
   comentarios         String?
-  ejercicios          ejercicios @relation(fields: [ejercicio_id], references: [id_ejercicio], onUpdate: NoAction, map: "fk_rutina_ejercicio_ejercicio")
-  rutinas             rutinas    @relation(fields: [rutina_id], references: [id_rutina], onDelete: Cascade, onUpdate: NoAction, map: "fk_rutina_ejercicio_rutina")
 
-  @@unique([rutina_id, orden], map: "uq_rutina_ejercicio_orden")
+  ejercicios ejercicios @relation(fields: [ejercicio_id], references: [id_ejercicio], onUpdate: NoAction, map: "fk_rutina_ejercicio_ejercicio")
+  rutinas rutinas @relation(fields: [rutina_id], references: [id_rutina], onDelete: Cascade, onUpdate: NoAction, map: "fk_rutina_ejercicio_rutina")
+
+  @@unique([rutina_id, dia, orden], map: "uq_rutina_ejercicio_dia_orden")
   @@index([ejercicio_id], map: "idx_rutina_ejercicio_ejercicio_id")
   @@index([rutina_id], map: "idx_rutina_ejercicio_rutina_id")
 }

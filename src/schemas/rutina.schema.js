@@ -48,6 +48,11 @@ const idRutinaEjercicioSchema = z.object({
 const agregarEjercicioRutinaSchema = z.object({
     ejercicio_id: z.uuid(),
 
+    dia: z
+        .string()
+        .min(1, "El día es obligatorio")
+        .max(20, "El día no puede superar los 20 caracteres"),
+
     series: z
         .number()
         .int()
@@ -70,6 +75,13 @@ const agregarEjercicioRutinaSchema = z.object({
 });
 
 const actualizarEjercicioRutinaSchema = z.object({
+    ejercicio_id: z.uuid(),
+
+    dia: z
+        .string()
+        .min(1, "El día es obligatorio")
+        .max(20, "El día no puede superar los 20 caracteres"),
+
     series: z
         .number()
         .int()
@@ -91,11 +103,18 @@ const actualizarEjercicioRutinaSchema = z.object({
         .nullable()
 });
 
+const agregarEjerciciosLoteRutinaSchema = z.object({
+    ejercicios: z
+        .array(agregarEjercicioRutinaSchema)
+        .min(1, "Debe agregar al menos un ejercicio")
+});
+
 module.exports = {
     crearRutinaSchema,
     actualizarRutinaSchema,
     idRutinaSchema,
     idRutinaEjercicioSchema,
     agregarEjercicioRutinaSchema,
+    agregarEjerciciosLoteRutinaSchema,
     actualizarEjercicioRutinaSchema
 };

@@ -1,6 +1,7 @@
 const { createRemoteJWKSet, jwtVerify } = require("jose");
+require("dotenv").config();
 
-const issuer = "http://localhost:8180/realms/Routines-Manager";
+const issuer = process.env.REALM_KEYCLOAK;
 
 const authService = require("../services/auth.service");
 
