@@ -108,6 +108,7 @@ model usuarios {
   nombre                                  String       @db.VarChar(100)
   paterno                                 String       @db.VarChar(100)
   materno                                 String?      @db.VarChar(100)
+  logo_url                                String?      @db.Text
   fecha_creacion                          DateTime     @default(now()) @db.Timestamp(6)
   fecha_actualizacion                     DateTime     @default(now()) @db.Timestamp(6)
   clientes                                clientes[]

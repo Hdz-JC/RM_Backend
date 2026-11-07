@@ -52,8 +52,6 @@ async function autenticar(req, res, next) {
 
         const usuario = await authService.obtenerOCrearUsuario(payload);
 
-        console.log("Usuario PostgreSQL:", usuario.id_usuario);
-
         req.user = payload;
         req.usuario = usuario;
 

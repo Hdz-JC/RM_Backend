@@ -1,5 +1,72 @@
 const prisma = require("../config/prisma");
 
+async function obtenerLogoRutina(rutinaId, entrenadorId) {
+    const rutina = await prisma.rutinas.findFirst({
+        where: {
+            id_rutina: rutinaId,
+            entrenador_id: entrenadorId
+        },
+        include: {
+            usuarios_rutinas_entrenador_idTousuarios: true
+        }
+    });
+
+    if (!rutina) {
+        return null;
+    }
+
+    const logoUrl =
+        rutina
+            .usuarios_rutinas_entrenador_idTousuarios
+            .logo_url;
+
+    if (!logoUrl) {
+        return null;
+    }
+
+    // =========================
+    // OBTENER ID DE GOOGLE DRIVE
+    // =========================
+
+    const match = logoUrl.match(
+        /\/d\/([a-zA-Z0-9_-]+)/
+    );
+
+    if (!match) {
+        throw new Error(
+            "La URL del logo de Google Drive no es válida"
+        );
+    }
+
+    const logoId = match[1];
+
+    // =========================
+    // URL DIRECTA DE DESCARGA
+    // =========================
+
+    const urlDescarga =
+        `https://drive.google.com/uc?export=download&id=${logoId}`;
+
+    const respuesta = await fetch(urlDescarga);
+
+    if (!respuesta.ok) {
+        throw new Error(
+            `No se pudo descargar el logo. Status: ${respuesta.status}`
+        );
+    }
+
+    const buffer = Buffer.from(
+        await respuesta.arrayBuffer()
+    );
+
+    return {
+        buffer,
+        contentType:
+            respuesta.headers.get("content-type") ||
+            "image/png"
+    };
+}
+
 
 async function crearRutina(data, entrenadorId) {
 
@@ -136,21 +203,22 @@ async function obtenerRutinaPorId(id, entrenadorId) {
 
         entrenador: {
             id: rutina.entrenador_id,
-
             nombre:
                 rutina
                     .usuarios_rutinas_entrenador_idTousuarios
                     .nombre,
-
             paterno:
                 rutina
                     .usuarios_rutinas_entrenador_idTousuarios
                     .paterno,
-
             materno:
                 rutina
                     .usuarios_rutinas_entrenador_idTousuarios
-                    .materno
+                    .materno,
+            logo_url:
+                rutina
+                    .usuarios_rutinas_entrenador_idTousuarios
+                    .logo_url
         },
 
         cliente: {
@@ -564,5 +632,6 @@ module.exports = {
     actualizarEjercicioRutina,
     eliminarEjercicioRutina,
     actualizarRutina,
-    eliminarRutina
+    eliminarRutina,
+    obtenerLogoRutina
 };

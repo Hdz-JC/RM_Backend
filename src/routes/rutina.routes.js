@@ -42,6 +42,10 @@ router.get(
     rutinaController.obtenerRutinas
 );
 
+router.get(
+    "/:id/logo",
+    rutinaController.obtenerLogoRutina
+);
 
 /*
     Obtener una rutina

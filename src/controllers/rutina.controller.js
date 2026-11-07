@@ -43,6 +43,29 @@ async function obtenerRutinas(req, res, next) {
     }
 }
 
+async function obtenerLogoRutina(req, res, next) {
+    try {
+        const entrenadorId = req.usuario.id_usuario;
+
+        const logo = await rutinaService.obtenerLogoRutina(
+            req.params.id,
+            entrenadorId
+        );
+
+        if (!logo) {
+            return res.status(404).json({
+                mensaje: "La rutina no existe o no tienes permiso"
+            });
+        }
+
+        res.set("Content-Type", logo.contentType);
+        res.send(logo.buffer);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 async function obtenerRutinaPorId(req, res, next) {
 
@@ -313,6 +336,7 @@ module.exports = {
     actualizarEjercicioRutina,
     eliminarEjercicioRutina,
     actualizarRutina,
-    eliminarRutina
+    eliminarRutina,
+    obtenerLogoRutina
 };
 
